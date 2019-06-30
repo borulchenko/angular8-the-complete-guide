@@ -1,6 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Post } from './post.model';
 
 @Component({
   selector: 'app-root',
@@ -20,11 +21,11 @@ export class AppComponent implements OnInit {
   onCreatePost(postData: { title: string; content: string }) {
     // Send Http request
     this.http
-      .post(
+      .post<{ [key: string]: Post }>(
         'https://ng-complete-guide-d5f2a.firebaseio.com/posts.json',
         postData)
       .subscribe(response => {
-        console.log(response);
+        console.log(response[0].content);
       });
   }
 
@@ -39,7 +40,7 @@ export class AppComponent implements OnInit {
 
   private fetchPosts() {
     this.http
-      .get('https://ng-complete-guide-d5f2a.firebaseio.com/posts.json')
+      .get<{ [key: string]: Post }>('https://ng-complete-guide-d5f2a.firebaseio.com/posts.json')
       .pipe(map(response => {
         const postsArray = [];
         for (const key in response) {
@@ -50,7 +51,7 @@ export class AppComponent implements OnInit {
         return postsArray;
       }))
       .subscribe(response => {
-        console.log(response);
+        console.log(response[0].title);
       });
   }
 }
