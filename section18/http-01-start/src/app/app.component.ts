@@ -17,6 +17,9 @@ export class AppComponent implements OnInit {
   }
 
   ngOnInit() {
+    this.postService.postsChanged.subscribe(() => {
+      this.fetchPosts();
+    });
     this.fetchPosts();
   }
 
@@ -32,6 +35,10 @@ export class AppComponent implements OnInit {
 
   onClearPosts() {
     // Send Http request
+    this.postService.deletePosts()
+      .subscribe(() => {
+        this.loadedPosts = [];
+      });
   }
 
   private fetchPosts() {

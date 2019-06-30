@@ -2,9 +2,11 @@ import { Post } from './post.model';
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
+  postsChanged = new Subject<void>();
   constructor(private http: HttpClient) {
   }
 
@@ -15,8 +17,8 @@ export class PostsService {
       .post<{ [key: string]: Post }>(
         'https://ng-complete-guide-d5f2a.firebaseio.com/posts.json',
         postData)
-      .subscribe(response => {
-        console.log(response);
+      .subscribe(() => {
+        this.postsChanged.next();
       });
   }
 
@@ -32,5 +34,9 @@ export class PostsService {
         }
         return postsArray;
       }));
+  }
+
+  deletePosts() {
+    return this.http.delete('https://ng-complete-guide-d5f2a.firebaseio.com/posts.json');
   }
 }
