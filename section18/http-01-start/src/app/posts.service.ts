@@ -6,6 +6,7 @@ import { Subject } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
+  error = new Subject<string>();
   postsChanged = new Subject<void>();
   constructor(private http: HttpClient) {
   }
@@ -19,6 +20,8 @@ export class PostsService {
         postData)
       .subscribe(() => {
         this.postsChanged.next();
+      }, error => {
+        this.error.next(error.message);
       });
   }
 
