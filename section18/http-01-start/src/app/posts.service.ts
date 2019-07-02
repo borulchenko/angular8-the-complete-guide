@@ -1,13 +1,14 @@
 import { Post } from './post.model';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
-import { map, catchError } from 'rxjs/operators';
+import { HttpClient, HttpEventType, HttpHeaders, HttpParams } from '@angular/common/http';
+import { catchError, map, tap } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
 @Injectable({providedIn: 'root'})
 export class PostsService {
   error = new Subject<string>();
   postsChanged = new Subject<void>();
+
   constructor(private http: HttpClient) {
   }
 
@@ -17,8 +18,12 @@ export class PostsService {
     this.http
       .post<{ [key: string]: Post }>(
         'https://ng-complete-guide-d5f2a.firebaseio.com/posts.json',
-        postData)
-      .subscribe(() => {
+        postData,
+        {
+          observe: 'response'
+        })
+      .subscribe(response => {
+        console.log(response);
         this.postsChanged.next();
       }, error => {
         this.error.next(error.message);
@@ -61,6 +66,21 @@ export class PostsService {
   }
 
   deletePosts() {
-    return this.http.delete('https://ng-complete-guide-d5f2a.firebaseio.com/posts.json');
+    return this.http.delete(
+      'https://ng-complete-guide-d5f2a.firebaseio.com/posts.json',
+      {
+        observe: 'events'
+      }
+    ).pipe(
+      tap(event => {
+        console.log(event);
+        if (event.type === HttpEventType.Sent) {
+          //  do other staff (event.body is not available here yet) / render UI / log
+        }
+        if (event.type === HttpEventType.Response) {
+          console.log(event.body);
+        }
+      })
+    );
   }
 }
