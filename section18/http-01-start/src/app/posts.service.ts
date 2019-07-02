@@ -1,6 +1,6 @@
 import { Post } from './post.model';
 import { Injectable } from '@angular/core';
-import { HttpClient, HttpHeaders } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 import { map, catchError } from 'rxjs/operators';
 import { Subject, throwError } from 'rxjs';
 
@@ -26,13 +26,14 @@ export class PostsService {
   }
 
   fetchPosts() {
+    const searchParams = this.createQueryParams();
+
     return this.http
       .get<{ [key: string]: Post }>(
         'https://ng-complete-guide-d5f2a.firebaseio.com/posts.json',
         {
-          headers: new HttpHeaders({
-            'Custom-Header': 'Hello'
-          })
+          headers: new HttpHeaders({'Custom-Header': 'Hello'}),
+          params: searchParams
         }
       )
       .pipe(
@@ -48,7 +49,15 @@ export class PostsService {
         catchError(errorRes => {
           // send to analytics/other generic error tasks
           return throwError(errorRes);
-    }));
+        }));
+  }
+
+  private createQueryParams() {
+    let searchParams = new HttpParams();
+    searchParams = searchParams.append('print', 'pretty');
+    searchParams = searchParams.append('custom', 'key');
+
+    return searchParams;
   }
 
   deletePosts() {
