@@ -25,7 +25,7 @@ export class AuthComponent {
       return;
     }
     const email = form.value.email;
-    const password = form.value.email;
+    const password = form.value.password;
 
     let authObservable: Observable<AuthResponseData>;
     this.isLoading = true;
@@ -44,7 +44,6 @@ export class AuthComponent {
         this.error = errorMessage;
         this.isLoading = false;
       });
-
 
     form.reset();
   }
