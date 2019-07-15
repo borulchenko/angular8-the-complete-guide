@@ -1,9 +1,10 @@
-import { Actions, Effect, ofType } from '@ngrx/effects';
+import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { Actions, Effect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap } from 'rxjs/operators';
 import * as AuthActions from './auth.actions';
 import { environment } from '../../../environments/environment';
-import { of } from 'rxjs';
 
 export interface AuthResponseData {
   kind: string;
@@ -15,6 +16,7 @@ export interface AuthResponseData {
   registered?: string;
 }
 
+@Injectable()
 export class AuthEffects {
   @Effect()
   authLogin = this.actions$.pipe(
@@ -29,14 +31,19 @@ export class AuthEffects {
             returnSecureToken: true
           }
         ).pipe(
-          catchError(error => {
-            of();
+          map(resData => {
+            const expirationDate = new Date(new Date().getTime() + +resData.expiresIn * 1000);
+            return of(new AuthActions.Login({
+              email: resData.email,
+              userId: resData.localId,
+              token: resData.idToken,
+              expirationDate: expirationDate
+            }));
           }),
-          map(respData => {
-            of();
+          catchError(error => {
+            return of();
           }));
     }),
-
   );
 
   // add dollar sign to the Observables
