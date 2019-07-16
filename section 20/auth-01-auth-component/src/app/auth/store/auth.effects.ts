@@ -1,8 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { Actions, Effect, ofType } from '@ngrx/effects';
-import { of } from 'rxjs';
-import { catchError, map, switchMap } from 'rxjs/operators';
+import { Router } from '@angular/router';
+import { of, throwError } from 'rxjs';
+import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import * as AuthActions from './auth.actions';
 import { environment } from '../../../environments/environment';
 
@@ -33,21 +34,47 @@ export class AuthEffects {
         ).pipe(
           map(resData => {
             const expirationDate = new Date(new Date().getTime() + +resData.expiresIn * 1000);
-            return of(new AuthActions.Login({
+            return new AuthActions.Login({
               email: resData.email,
               userId: resData.localId,
               token: resData.idToken,
-              expirationDate: expirationDate
-            }));
+              expirationDate
+            });
+
           }),
-          catchError(error => {
-            return of();
+          catchError(errorResp => {
+            let errorMessage = 'An unknown error occured!';
+            if (!errorResp.error || !errorResp.error.error) {
+              return of(new AuthActions.LoginFail(errorMessage));
+            }
+            switch (errorResp.error.error.message) {
+              case 'EMAIL_EXISTS':
+                errorMessage = 'This email already exists';
+                break;
+              case 'EMAIL_NOT_FOUND':
+                errorMessage = 'This email does not exists';
+                break;
+              case 'INVALID_PASSWORD':
+                errorMessage = 'This password is not correct';
+                break;
+            }
+
+            return of(new AuthActions.LoginFail(errorMessage));
           }));
     }),
   );
 
+  @Effect({dispatch: false})
+  authSuccess = this.actions$.pipe(
+    ofType(AuthActions.LOGIN),
+    tap(() => {
+      this.router.navigate(['/']);
+    })
+  );
+
   // add dollar sign to the Observables
   constructor(private actions$: Actions,
-              private http: HttpClient) {
+              private http: HttpClient,
+              private router: Router) {
   }
 }
