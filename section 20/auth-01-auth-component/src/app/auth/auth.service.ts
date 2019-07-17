@@ -31,7 +31,7 @@ export class AuthService {
               private store: Store<fromApp.AppState>) {
   }
 
-  signup(email: string, password: string) {
+  /*signup(email: string, password: string) {
     return this.http.post<AuthResponseData>(
       'https://www.googleapis.com/identitytoolkit/v3/relyingparty/signupNewUser?key=' + environment.firebaseAPIKey,
       {
@@ -51,6 +51,27 @@ export class AuthService {
       })
     );
   }
+
+  login(email: string, password: string) {
+    return this.http.post<AuthResponseData>(
+      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=' + environment.firebaseAPIKey,
+      {
+        email,
+        password,
+        returnSecureToken: true
+      }
+    ).pipe(
+      catchError(this.handleError),
+      tap(respData => {
+        this.handleAuthentication(
+          respData.email,
+          respData.localId,
+          respData.idToken,
+          +respData.expiresIn
+        );
+      })
+    );
+  }*/
 
   autoLogin() {
     const userData: {
@@ -85,27 +106,6 @@ export class AuthService {
     }
   }
 
-  login(email: string, password: string) {
-    return this.http.post<AuthResponseData>(
-      'https://www.googleapis.com/identitytoolkit/v3/relyingparty/verifyPassword?key=' + environment.firebaseAPIKey,
-      {
-        email,
-        password,
-        returnSecureToken: true
-      }
-    ).pipe(
-      catchError(this.handleError),
-      tap(respData => {
-        this.handleAuthentication(
-          respData.email,
-          respData.localId,
-          respData.idToken,
-          +respData.expiresIn
-        );
-      })
-    );
-  }
-
   autoLogout(expirationDuration: number) {
     this.tokenExpirationTimer = setTimeout(() => {
       this.logout();
@@ -115,7 +115,6 @@ export class AuthService {
   logout() {
     // this.user.next(null);
     this.store.dispatch(new AuthActions.Logout());
-    this.router.navigate(['/auth']);
     localStorage.removeItem('userData');
 
     if (this.tokenExpirationTimer) {
