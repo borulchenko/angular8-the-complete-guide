@@ -1,8 +1,8 @@
 import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Actions, Effect, ofType } from '@ngrx/effects';
 import { Router } from '@angular/router';
-import { of, throwError } from 'rxjs';
+import { Actions, Effect, ofType } from '@ngrx/effects';
+import { of } from 'rxjs';
 import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import * as AuthActions from './auth.actions';
 import { environment } from '../../../environments/environment';

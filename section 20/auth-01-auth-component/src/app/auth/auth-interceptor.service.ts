@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { HttpHandler, HttpInterceptor, HttpParams, HttpRequest } from '@angular/common/http';
-import { exhaustMap, map, take } from 'rxjs/operators';
 import { Store } from '@ngrx/store';
+import { exhaustMap, map, take } from 'rxjs/operators';
 import { AuthService } from './auth.service';
 import * as fromApp from '../store/app.reducer';
 

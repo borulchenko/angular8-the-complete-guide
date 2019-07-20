@@ -1,10 +1,8 @@
 import { Component, ComponentFactoryResolver, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { NgForm } from '@angular/forms';
 import { Store } from '@ngrx/store';
-import { Router } from '@angular/router';
-import { Observable, Subscription } from 'rxjs';
+import { Subscription } from 'rxjs';
 
-import { AuthResponseData, AuthService } from './auth.service';
 import { AlertComponent } from '../shared/alert/alert.component';
 import { PlaceholderDirective } from '../shared/placeholder/placeholder.directive';
 import * as fromApp from '../store/app.reducer';
@@ -22,9 +20,7 @@ export class AuthComponent implements OnDestroy, OnInit {
   private closeSub: Subscription;
   private storeSub: Subscription;
 
-  constructor(private authService: AuthService,
-              private router: Router,
-              private componentFactoryResolver: ComponentFactoryResolver,
+  constructor(private componentFactoryResolver: ComponentFactoryResolver,
               private store: Store<fromApp.AppState>) {
   }
 
@@ -40,33 +36,16 @@ export class AuthComponent implements OnDestroy, OnInit {
     const password = form.value.password;
 
     if (this.isLoginMode) {
-      // authObservable = this.authService.login(email, password);
       this.store.dispatch(
         new AuthActions.LoginStart({email, password})
       );
     } else {
-      // authObservable = this.authService.signup(email, password);
       this.store.dispatch(new AuthActions.SignupStart({email, password}));
     }
-
-
-    // authObservable.subscribe(responseData => {
-    //     console.log(responseData);
-    //     this.isLoading = false;
-    //     this.router.navigate(['/recipes']);
-    //   },
-    //   errorMessage => {
-    //     console.log(errorMessage);
-    //     this.error = errorMessage;
-    //     this.showErrorAlert(errorMessage);
-    //     this.isLoading = false;
-    //   });
-
     form.reset();
   }
 
   private showErrorAlert(message: string) {
-    // const alertCmp = new AlertComponent();
     const alertCmpFactory = this.componentFactoryResolver.resolveComponentFactory(
       AlertComponent
     );
@@ -79,10 +58,6 @@ export class AuthComponent implements OnDestroy, OnInit {
       this.closeSub.unsubscribe();
       hostViewContainerRef.clear();
     });
-  }
-
-  onHandleError() {
-    this.store.dispatch(new AuthActions.ClearError());
   }
 
   ngOnDestroy(): void {
