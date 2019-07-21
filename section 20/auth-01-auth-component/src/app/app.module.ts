@@ -22,7 +22,7 @@ import { RecipeEffects } from './recipes/store/recipe.effects';
     HeaderComponent
   ],
   imports: [
-    BrowserModule,
+    BrowserModule.withServerTransition({appId: 'ng-complete-guide-update'}),
     HttpClientModule,
     AppRoutingModule,
     StoreModule.forRoot(fromApp.appReducer),
