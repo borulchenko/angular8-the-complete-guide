@@ -1,5 +1,5 @@
-import {Component} from '@angular/core';
-import {trigger, state, style, transition, animate} from '@angular/animations';
+import { Component } from '@angular/core';
+import { trigger, state, style, transition, animate } from '@angular/animations';
 
 @Component({
   selector: 'app-root',
@@ -32,7 +32,15 @@ import {trigger, state, style, transition, animate} from '@angular/animations';
       })),
       transition('normal => highlighted', animate(300)),
       transition('highlighted => normal', animate(800)),
-      transition('shrunken <=> *', animate(500))
+      transition('shrunken <=> *', [
+        style({
+          'background-color': 'orange'
+        }),
+        animate(1000, style({
+          borderRadius: '50px'
+        })),
+        animate(500)
+      ])
     ])
   ]
 })
