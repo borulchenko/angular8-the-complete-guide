@@ -5,15 +5,19 @@
       <button
         class="btn btn-primary"
         (click)="onAnimate()"
-      >Animate!</button>
+      >Animate!
+      </button>
       <button
         class="btn btn-primary"
         (click)="onShrink()"
-      >Shrink!</button>
+      >Shrink!
+      </button>
       <hr>
       <div
         style="width: 100px; height: 100px"
-        [@divState]="state">
+        [@divState]="state"
+        (@divState.start)="animationStarted($event)"
+        (@divState.done)="animationEnded($event)">
       </div>
       <br>
       <div
@@ -52,4 +56,4 @@
         </li>
       </ul>
     </div>
-</div>
+  </div>
