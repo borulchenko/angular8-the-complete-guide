@@ -1,8 +1,7 @@
 {
   "$schema": "./node_modules/@angular/service-worker/config/schema.json",
   "index": "/index.html",
-  "assetGroups": [
-    {
+  "assetGroups": [{
       "name": "app",
       "installMode": "prefetch",
       "resources": {
@@ -25,6 +24,19 @@
           "/assets/**",
           "/*.(eot|svg|cur|jpg|png|webp|gif|otf|ttf|woff|woff2|ani)"
         ]
+      }
+    }],
+  "dataGroups": [
+    {
+      "name": "posts",
+      "urls": [
+        "https://jsonplaceholder.typicode.com/posts"
+      ],
+      "cacheConfig": {
+        "maxSize": 5,
+        "maxAge": "60m",
+        "timeout": "10s",
+        "strategy": "freshness"
       }
     }
   ]
