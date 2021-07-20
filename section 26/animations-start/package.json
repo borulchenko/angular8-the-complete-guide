@@ -22,7 +22,7 @@
     "bootstrap": "3.3.7",
     "core-js": "^3.1.2",
     "firebase": "^4.6.2",
-    "react-native": "^0.60.4",
+    "react-native": "^0.62.3",
     "rxjs": "6.3.3",
     "rxjs-compat": "^6.0.0",
     "tslib": "^1.9.0",
